@@ -1,36 +1,136 @@
-# 🎵 Telegram Song Search & Premium File Fetch Bot
+🚀 Telegram Multi-Feature Bot
 
-A fast, reliable and premium-enabled Telegram bot designed to:
+A clean, fast and stable Telegram bot built using **Pyrogram**.  
+Simple setup, easy deployment, and fully ready for Render hosting.
 
-- 🔍 Search and download **MP3** songs using YouTube  
-- 📁 Fetch documents from your Telegram **channel**  
-- ⭐ Provide **Premium access** for advanced features  
-- 📢 Allow Owner to broadcast updates  
-- 🗄 Store user data safely in **MongoDB**  
-- 🚀 Fully compatible with **Render Hosting** (24/7 uptime)
-
-Built with **Pyrogram**, **MongoDB**, and **YouTube Data API**.
+Made with ❤️ by **@technicalserena**
 
 ---
 
-## 📌 Key Features
+## 📌 Requirements (ENV Variables)
 
-### 🎶 **1. YouTube Song Search**
-Send any song name → Bot returns MP3.
+Render / Local — same variables required:
 
-### 📁 **2. File Fetching System**
-Use `/file <filename>` → Bot fetches file from your channel.
-
-### ⭐ **3. Premium System (Time-Based)**
-- Owners can add/remove premium  
-- Premium auto-expires after specific days  
-
-### 📢 **4. Broadcasting System**
-Owner can send message to every bot user with one command.
-
-### ✔️ **5. Clean & Simple Architecture**
-No nested folders — easy to maintain and deploy.
+API_ID=your_api_id API_HASH=your_api_hash BOT_TOKEN=your_bot_token OWNER_ID=your_telegram_id   # optional MONGO_URL=your_mongodb_url  # optional LOG_CHANNEL=channel_id      # optional
 
 ---
 
-## 📂 Project Structure# Musical-bot-new-
+## 📦 Installation (Local)
+
+```bash
+git clone https://github.com/yourusername/yourrepo
+cd yourrepo
+pip install -r requirements.txt
+python3 main.py
+
+
+---
+
+🌐 Render Deployment Guide
+
+1️⃣ Create New Web Service
+Select your GitHub repository.
+
+2️⃣ Build Command
+
+pip install -r requirements.txt
+
+3️⃣ Start Command
+
+python3 main.py
+
+4️⃣ Add Environment Variables exactly as listed above.
+
+5️⃣ Deploy
+Render automatically starts your bot.
+
+
+---
+
+🎮 Bot Commands (BotFather Format — Copy/Paste Ready)
+
+start - 🚀 Start the bot
+help - 📘 Show help menu
+about - 🧿 About this bot
+
+batch - 🗂️ Process multiple links at once
+single - 🔗 Process single link
+login - 🔑 Login to your account
+logout - 🚪 Logout from your account
+
+yt - 🎬 Download YouTube videos
+song - 🎵 Download audio from YouTube
+
+status - 📊 View bot status
+setbot - 🛠️ Set your own bot
+adl - 🎧 Download audio (30+ sites)
+dl - 📥 Download videos (30+ sites)
+
+transfer - 🎁 Gift premium to others
+info - 🪪 Get user information
+broadcast - 📢 Send message to all users
+id - 🆔 Get chat/user ID
+
+
+---
+
+📝 Usage Guide
+
+💠 Start
+
+Send:
+
+/start
+
+Bot will show welcome panel.
+
+💠 Process a YouTube Video
+
+/single https://youtube.com/.....
+
+💠 Bulk Processing
+
+/batch
+
+Upload your file containing multiple links.
+
+💠 Login
+
+/login
+
+💠 Logout
+
+/logout
+
+💠 Check Status
+
+/status
+
+
+---
+
+📁 Project Files
+
+main.py
+config.py
+requirements.txt
+README.md
+modules/
+handlers/
+
+
+---
+
+👑 Credits
+
+Developed by @technicalserena
+Please give proper credit if you use this project.
+
+
+---
+
+🛡 License
+
+This project is free to modify and use.
+
+---
