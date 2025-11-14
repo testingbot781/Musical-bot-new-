@@ -1,64 +1,51 @@
-import os
 from flask import Flask, request
 from pyrogram import Client, filters
-from config import API_ID, API_HASH, BOT_TOKEN
+import os
+import threading
 
-# Flask Server
-app_server = Flask(__name__)
+# Load ENV
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Pyrogram Bot
-tg_bot = Client(
-    "render_webhook_bot",
+# Flask App
+app = Flask(__name__)
+
+# Pyrogram Bot Client
+bot = Client(
+    "mybot",
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
-    workers=1,
-    in_memory=True
 )
 
-# ------------------- Commands -------------------
+# Start Bot in background thread (important for Render)
+def run_bot():
+    bot.run()
 
-@tg_bot.on_message(filters.command("start"))
-async def start_handler(_, message):
-    await message.reply(
-        "👋 Welcome!\n"
-        "Send any song name to download MP3.\n"
-        "Use /help to see more commands."
-    )
+threading.Thread(target=run_bot).start()
 
-@tg_bot.on_message(filters.command("help"))
-async def help_handler(_, message):
-    await message.reply(
-        "📘 **Commands**\n\n"
-        "🎵 Send any song name\n"
-        "📂 /file <name>\n"
-        "⭐ /add <user_id> <days>\n"
-        "❌ /rem <user_id>\n"
-        "📢 /broadcast <msg>"
-    )
 
-@tg_bot.on_message(filters.text & ~filters.command(["start", "help"]))
-async def song_handler(_, message):
-    await message.reply(f"🎶 Searching: `{message.text}` (demo placeholder)")
-
-# ------------------- Webhook Route -------------------
-
-@app_server.route(f"/webhook/{BOT_TOKEN}", methods=["POST"])
+# ---------- WEBHOOK ENDPOINT ----------
+@app.post(f"/{BOT_TOKEN}")
 def webhook():
-    try:
-        tg_bot.process_update(request.get_json(force=True))
-    except Exception as e:
-        print("Error:", e)
+    update = request.get_json()
+    if update:
+        bot.process_updates([update])
     return "OK", 200
 
-@app_server.route("/")
-def home():
-    return "Bot Running Successfully (Webhook Mode)"
 
-# ------------------- Run -------------------
+# ---------- HOME PAGE ----------
+@app.get("/")
+def home():
+    return "Bot is running on Render!", 200
+
+
+# ---------- BOT HANDLERS ----------
+@bot.on_message(filters.command("start"))
+async def start_cmd(client, message):
+    await message.reply("Hello! Your webhook bot is working successfully.")
+
 
 if __name__ == "__main__":
-    print("Starting Bot in Webhook Mode...")
-    tg_bot.start()
-    port = int(os.environ.get("PORT", 10000))
-    app_server.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=10000)
