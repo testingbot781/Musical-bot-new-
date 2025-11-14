@@ -3,12 +3,12 @@ from flask import Flask, request
 from pyrogram import Client, filters
 from config import API_ID, API_HASH, BOT_TOKEN
 
-# Flask App
+# Flask Server
 app_server = Flask(__name__)
 
-# Pyrogram Bot (Webhook Mode)
+# Pyrogram Bot
 tg_bot = Client(
-    "webhook_bot",
+    "render_webhook_bot",
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
@@ -16,14 +16,14 @@ tg_bot = Client(
     in_memory=True
 )
 
-# ----------------- Bot Commands -----------------
+# ------------------- Commands -------------------
 
 @tg_bot.on_message(filters.command("start"))
 async def start_handler(_, message):
     await message.reply(
-        "👋 Welcome!\n\n"
+        "👋 Welcome!\n"
         "Send any song name to download MP3.\n"
-        "Use /help to see all commands."
+        "Use /help to see more commands."
     )
 
 @tg_bot.on_message(filters.command("help"))
@@ -39,25 +39,26 @@ async def help_handler(_, message):
 
 @tg_bot.on_message(filters.text & ~filters.command(["start", "help"]))
 async def song_handler(_, message):
-    query = message.text
-    await message.reply(f"🎶 Searching: `{query}` (demo placeholder)")
+    await message.reply(f"🎶 Searching: `{message.text}` (demo placeholder)")
 
-# ----------------- Webhook -----------------
+# ------------------- Webhook Route -------------------
 
-@app_server.route("/webhook", methods=["POST"])
+@app_server.route(f"/webhook/{BOT_TOKEN}", methods=["POST"])
 def webhook():
-    update = request.get_json()
-    tg_bot.process_update(update)
+    try:
+        tg_bot.process_update(request.get_json(force=True))
+    except Exception as e:
+        print("Error:", e)
     return "OK", 200
 
 @app_server.route("/")
 def home():
-    return "Bot is running on Render (Webhook Mode)."
+    return "Bot Running Successfully (Webhook Mode)"
 
-# ----------------- Main -----------------
+# ------------------- Run -------------------
 
 if __name__ == "__main__":
-    print("Starting Webhook Bot...")
+    print("Starting Bot in Webhook Mode...")
     tg_bot.start()
     port = int(os.environ.get("PORT", 10000))
     app_server.run(host="0.0.0.0", port=port)
