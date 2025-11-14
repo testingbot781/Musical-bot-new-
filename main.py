@@ -4,24 +4,24 @@ from flask import Flask, request
 from pyrogram import Client, filters
 import threading
 
+
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # ---------------- BOT CLIENT ---------------- #
 bot = Client(
-    "webhook_bot",
+    "webhook_mode",
     api_id=API_ID,
     api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-    workdir="./"
+    bot_token=BOT_TOKEN
 )
 
 # ----------- START BOT IN BACKGROUND ----------- #
-def start_bot():
+def run_bot():
     bot.run()
 
-threading.Thread(target=start_bot).start()
+threading.Thread(target=run_bot).start()
 
 
 # ----------------- FLASK APP ------------------ #
@@ -29,16 +29,17 @@ app = Flask(__name__)
 
 @app.get("/")
 def home():
-    return "Bot is online and webhook is active!", 200
+    return "Bot Running + Webhook Active", 200
 
 
-# ------------- WEBHOOK RECEIVER --------------- #
-@app.post(f"/webhook/{BOT_TOKEN}")
-def webhook():
+# ------------- EXACT MATCHING ROUTE --------------- #
+@app.post(f"/{BOT_TOKEN}")
+def handle_update():
     try:
         update = request.get_json()
 
         if update:
+            # Pyrogram queue
             bot.dispatcher.updates_queue.put(update)
 
         return "OK", 200
@@ -49,8 +50,8 @@ def webhook():
 
 # -------- BOT COMMAND HANDLER -------- #
 @bot.on_message(filters.command("start"))
-async def start_handler(client, message):
-    await message.reply("Webhook bot is working successfully!")
+async def start_cmd(client, message):
+    await message.reply("Webhook successfully connected! Bot is alive.")
 
 
 # ---------------- RUN FLASK ------------------ #
